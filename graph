@@ -1,0 +1,8 @@
+digraph {
+	graph [rankdir=LR]
+	4417645248 [label="{ b | data -3.0000 | grad 0.0000 }" shape=record]
+	4417645776 [label="{ c | data -6.0000 | grad 0.0000 }" shape=record]
+	4417646448 [label="{ a | data 2.0000 | grad 0.0000 }" shape=record]
+	4417645248 -> 4417645776
+	4417646448 -> 4417645776
+}

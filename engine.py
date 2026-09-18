@@ -69,8 +69,3 @@ class Value:
         return f"Value(data={self.data}, grad={self.grad} , prev={self._prev})"
 
 
-if __name__ == '__main__':
-    x = Value(0.0)
-    y = x.tanh()
-    y.backward()
-    print(x.grad)

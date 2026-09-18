@@ -1,4 +1,6 @@
 
+import math
+
 
 class Value:
     def __init__(self,data, _children=(), _op='', label=''):
@@ -11,6 +13,7 @@ class Value:
 
 
     def __add__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
         out = Value(self.data + other.data, _children=(self, other), _op='+')
 
         def _backward():
@@ -22,6 +25,7 @@ class Value:
         return out
 
     def __mul__(self , other):
+        other = other if isinstance(other, Value) else Value(other)
         out = Value(self.data * other.data, _children=(self, other), _op='*')
 
         def _backward():
@@ -31,6 +35,17 @@ class Value:
         out._backward = _backward
         return out
 
+
+    def tanh(self):
+        x = self.data
+        t = (math.exp(2*x) - 1) / (math.exp(2*x) + 1)
+        out = Value(t, _children=(self,), _op='tanh')
+
+        def _backward():
+            self.grad += (1 - t**2) * out.grad # c = tanh(a)  --> it will make the grad of a equal to the grad of c multiplied by the derivative of tanh which is (1 - tanh(a)^2)
+
+        out._backward = _backward
+        return out
 
     def backward(self):
         topo = []
@@ -55,11 +70,7 @@ class Value:
 
 
 if __name__ == '__main__':
-    a = Value(2.0, label='a')
-    b = Value(-3.0, label='b')
-    e = Value(10.0, label='e')
-    d = a * b + e
-    d.label = 'd'
-
-    d.backward()
-    print(a.grad, b.grad, e.grad)
+    x = Value(0.0)
+    y = x.tanh()
+    y.backward()
+    print(x.grad)

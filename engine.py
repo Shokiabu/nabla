@@ -31,6 +31,25 @@ class Value:
         out._backward = _backward
         return out
 
+
+    def backward(self):
+        topo = []
+        visited = set()
+        
+        def build_tupo (v):
+            if v not in visited:
+                visited.add(v)
+                for child in v._prev:
+                    build_tupo(child)
+                topo.append(v)
+
+        build_tupo(self)
+        self.grad = 1.0
+        for node in reversed(topo):
+            node._backward()
+            
+        
+
     def __repr__(self):
         return f"Value(data={self.data}, grad={self.grad} , prev={self._prev})"
 
@@ -38,7 +57,9 @@ class Value:
 if __name__ == '__main__':
     a = Value(2.0, label='a')
     b = Value(-3.0, label='b')
-    c = a * b
-    c.label = 'c'
+    e = Value(10.0, label='e')
+    d = a * b + e
+    d.label = 'd'
 
-print(c)
+    d.backward()
+    print(a.grad, b.grad, e.grad)

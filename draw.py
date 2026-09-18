@@ -15,6 +15,9 @@ def trace(root):
     return nodes, edges
 
 
+
+
+
 def draw(root):
     dot = Digraph(format='svg', graph_attr={'rankdir': 'LR'})
     nodes, edges = trace(root)

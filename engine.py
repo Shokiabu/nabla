@@ -36,6 +36,24 @@ class Value:
         return out
 
 
+    def __pow__(self, other):
+        assert isinstance(other, (int, float)), "only supporting int/float powers for now"
+        out = Value(self.data ** other, _children=(self,), _op=f'**{other}')
+
+        def _backward():
+            self.grad += (other * self.data ** (other - 1)) * out.grad # c = a^b  --> it will make the grad of a equal to the grad of c multiplied by the derivative of a^b which is b*a^(b-1)
+
+        out._backward = _backward
+        return out
+
+
+    def __neg__(self): # -self
+        return self * -1
+
+    def __sub__(self, other):
+        return self + (-other)
+    
+
     def tanh(self):
         x = self.data
         t = (math.exp(2*x) - 1) / (math.exp(2*x) + 1)
